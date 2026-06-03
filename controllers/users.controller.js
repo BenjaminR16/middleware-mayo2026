@@ -1,7 +1,7 @@
-import { userService, userProfileService, userRegisterService } from "../services/users.service.js";
+import { userRegisterService, userProfileService, userLoginService } from "../services/users.service.js";
 
 export async function usersController(req, res) {
-    res.status(200).send(userService());
+    res.status(200).send(userRegisterService());
 }
 
 export async function registerController(req, res) {
@@ -18,7 +18,7 @@ export async function loginController(req, res) {
         const { password, email } = req.body;
 
         //  Agregado el await
-        const newUser = await userRegisterService(password, email);
+        const newUser = await userLoginService(password, email);
 
         res.status(201).send(newUser);
     } catch (error) {

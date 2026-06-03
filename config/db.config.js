@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import 'dotenv/config'
 
-mongoose.connect('mongodb+srv://brcj16_db_user:TNFnW8qTKLAAmyla@cluster0.pgryizu.mongodb.net/prueba')
+mongoose.connect(process.env.DB_URI)
     .then(() => console.log("conected"))
     .catch(err => console.log(err))
 
