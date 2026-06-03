@@ -1,0 +1,32 @@
+{
+  "name": "middleware-mayo2026",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000m\u0000i\u0000d\u0000d\u0000l\u0000e\u0000w\u0000a\u0000r\u0000e\u0000-\u0000m\u0000a\u0000y\u0000o\u00002\u00000\u00002\u00006\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BenjaminR16/middleware-mayo2026.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/BenjaminR16/middleware-mayo2026/issues"
+  },
+  "homepage": "https://github.com/BenjaminR16/middleware-mayo2026#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.3"
+  }
+}
