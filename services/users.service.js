@@ -1,5 +1,5 @@
 import { model } from "../models/users.model.js";
-import bcrypt, { hash } from 'bcrypt'
+import bcrypt from 'bcrypt'
 import { createToken } from "./token.service.js";
 
 export function userService() {
@@ -17,6 +17,7 @@ export async function userRegisterService(nombre, password, email) {
         }
 
         //salt dice las veces que se encripta y hash es donde encriptamos 
+
         const saltRounds = 10
         const salt = bcrypt.genSaltSync(saltRounds)
         const hash = bcrypt.hashSync(password, salt)
@@ -33,7 +34,7 @@ export async function userRegisterService(nombre, password, email) {
             message: "error creando usuario",
         }
     }
-    return await model().insertOne({ nombre, password, email })
+    // return await model().insertOne({ nombre, password, email })
 }
 
 export async function userLoginService(password, email) {
@@ -57,7 +58,7 @@ export async function userLoginService(password, email) {
 
     const token = createToken(findUser.nombre, findUser.email)
     return {
-        status: 400,
+        status: 200,
         message: { status: "ok", message: "login correcto", token }
     }
 }
@@ -65,3 +66,62 @@ export async function userLoginService(password, email) {
 export async function userProfileService(email) {
     return await model().findOne({ email })
 }
+
+export async function userUpdateService(email, password, newPassword) {
+    const findUser = await model().findOne({ email })
+
+    if (!findUser) {
+        return {
+            status: 400, //buscar codigo de usuario no encontrado
+            message: "Usuario no encontrado"
+        }
+    }
+
+    const hasPass = await bcrypt.compare(password, findUser.password)
+
+    if (!hasPass) {
+        return {
+            status: 400,
+            message: "Clave incorrectos"
+        }
+    }
+
+    console.log(password, "nueva: " + newPassword)
+    const saltRounds = 10
+    const salt = bcrypt.genSaltSync(saltRounds)
+    const newHash = bcrypt.hashSync(newPassword, salt)
+
+    await model().updateOne({ email }, { password: newHash })
+
+    return {
+        status: 200,
+        message: "Contrasena actualizada"
+    }
+}
+
+export async function userDeleteService(email, password) {
+    const findUser = await model().findOne({ email })
+    if (!findUser) {
+        return {
+            status: 400,
+            message: "Clave o correo incorrectos"
+        }
+    }
+    const hasPass = await bcrypt.compare(password, findUser.password)
+
+    if (!hasPass) {
+        return {
+            status: 400,
+            message: "Clave o correo incorrectos"
+        }
+    }
+    console.log(email, password)
+    await model().deleteOne({ email })
+
+    return {
+        status: 200,
+        message: "Usuario eliminado"
+    }
+
+}
+

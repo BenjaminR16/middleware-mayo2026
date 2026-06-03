@@ -1,4 +1,4 @@
-import { userRegisterService, userProfileService, userLoginService } from "../services/users.service.js";
+import { userRegisterService, userProfileService, userLoginService, userUpdateService, userDeleteService } from "../services/users.service.js";
 
 export async function usersController(req, res) {
     res.status(200).send(userRegisterService());
@@ -30,3 +30,20 @@ export async function loginController(req, res) {
 export async function profileController(req, res) {
     res.send(await userProfileService(req.body.email));
 }
+
+export async function updateController(req, res) {
+    const { password, newPassword } = req.body
+    const email = req.user.email
+
+    const update = await userUpdateService(email, password, newPassword)
+
+    res.status(update.status).send(update)
+}
+
+export async function deleteController(req, res) {
+    const { password } = req.body
+    const email = req.user.email
+    const deleteUser = await userDeleteService(email, password)
+    res.status(deleteUser.status).send(deleteUser)
+}
+
