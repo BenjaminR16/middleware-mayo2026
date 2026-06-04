@@ -1,4 +1,4 @@
-import { model } from "../models/users.model.js";
+import { model } from "../models/user.supabase.model.js";
 import bcrypt from 'bcrypt'
 import { createToken } from "./token.service.js";
 
@@ -6,7 +6,7 @@ export function userService() {
     return model
 }
 
-export async function userRegisterService(nombre, password, email) {
+export async function userRegisterService(nombre, password, email, rol) {
     try {
         const emailExist = await model().findOne({ email })
         if (emailExist) {
@@ -22,7 +22,7 @@ export async function userRegisterService(nombre, password, email) {
         const salt = bcrypt.genSaltSync(saltRounds)
         const hash = bcrypt.hashSync(password, salt)
 
-        await model().insertOne({ nombre, password: hash, email })
+        await model().insertOne({ nombre, password: hash, email, rol })
         return {
             status: 201,
             message: "usuario creado"
@@ -56,7 +56,7 @@ export async function userLoginService(password, email) {
         }
     }
 
-    const token = createToken(findUser.nombre, findUser.email)
+    const token = createToken(findUser.nombre, findUser.email, findUser.rol)
     return {
         status: 200,
         message: { status: "ok", message: "login correcto", token }
@@ -115,7 +115,7 @@ export async function userDeleteService(email, password) {
             message: "Clave o correo incorrectos"
         }
     }
-    console.log(email, password)
+    console.log("Usuario eliminado:", email)
     await model().deleteOne({ email })
 
     return {

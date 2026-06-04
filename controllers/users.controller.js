@@ -5,10 +5,10 @@ export async function usersController(req, res) {
 }
 
 export async function registerController(req, res) {
-    const { nombre, password, email } = req.body;
+    const { nombre, password, email, rol } = req.body;
 
     //  Agregado el await
-    const newUser = await userRegisterService(nombre, password, email);
+    const newUser = await userRegisterService(nombre, password, email, rol);
 
     res.status(newUser.status).send(newUser.message);
 }
@@ -32,8 +32,7 @@ export async function profileController(req, res) {
 }
 
 export async function updateController(req, res) {
-    const { password, newPassword } = req.body
-    const email = req.user.email
+    const { email, password, newPassword } = req.body
 
     const update = await userUpdateService(email, password, newPassword)
 
@@ -41,8 +40,8 @@ export async function updateController(req, res) {
 }
 
 export async function deleteController(req, res) {
-    const { password } = req.body
-    const email = req.user.email
+    const { email, password } = req.body
+
     const deleteUser = await userDeleteService(email, password)
     res.status(deleteUser.status).send(deleteUser)
 }
