@@ -90,3 +90,4 @@ const productModel = {
 export function model() {
     return productModel
 }
+

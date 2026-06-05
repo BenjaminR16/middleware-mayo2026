@@ -1,5 +1,6 @@
 import model from "../models/product.model.js";
 import userModel from "../models/users.model.js"
+import { verifyUser } from "./users.service.js";
 import bcrypt from 'bcrypt'
 
 export async function productViewService() {
@@ -16,29 +17,13 @@ export async function productViewService() {
 
 export async function productUploadService(email, password, nombre, descripcion, precio) {
     try {
-        const findUser = await userModel().findOne({ email })
-        //verificar la contrasena tambien no solo el usuario
-        if (!findUser) {
-            return {
-                status: 400,
-                message: "usuario no encontrado"
-            }
-        }
 
-        const comparePass = await bcrypt.compare(password, findUser.password)
-        if (!comparePass) {
+        const user = await verifyUser(email, password)
+        if (!user) {
             return {
                 status: 400,
-                message: "Usuario o clave incorrectos"
-            }
-        }
-
-        //comprueba el rol del usuario 
-        if (findUser.rol !== 'admin') {
-            return {
-                status: 400,
-                message: "No tienes privilegios de admin"
-            }
+                message: "No autorizado"
+            };
         }
 
         await model().insertOne({ nombre, descripcion, precio })
@@ -48,37 +33,21 @@ export async function productUploadService(email, password, nombre, descripcion,
         }
     } catch (error) {
         return {
-            status: 400,
-            message: "Error al crear el producto"
+            status: 500,
+            message: "Error al crear el producto",
+            error: error.message
         }
     }
 }
 
 export async function productUpdateService(email, password, nombre, newNombre, newDescription, newPrice) {
     try {
-        const findUser = await userModel().findOne({ email })
-        //verificar la contrasena tambien no solo el usuario
-        if (!findUser) {
+        const user = await verifyUser(email, password)
+        if (!user) {
             return {
                 status: 400,
-                message: "usuario no encontrado"
-            }
-        }
-
-        const comparePass = await bcrypt.compare(password, findUser.password)
-        if (!comparePass) {
-            return {
-                status: 400,
-                message: "Usuario o clave incorrectos"
-            }
-        }
-
-        //comprueba el rol del usuario 
-        if (findUser.rol !== 'admin') {
-            return {
-                status: 400,
-                message: "No tienes privilegios de admin"
-            }
+                message: "No autorizado"
+            };
         }
 
         await model().updateOne({ nombre }, { descripcion: newDescription, precio: newPrice },)
@@ -97,29 +66,12 @@ export async function productUpdateService(email, password, nombre, newNombre, n
 
 export async function productRemoveService(email, password, nombre) {
     try {
-        const findUser = await userModel().findOne({ email })
-
-        if (!findUser) {
+        const user = await verifyUser(email, password)
+        if (!user) {
             return {
                 status: 400,
-                message: "usuario no encontrado"
-            }
-        }
-
-        const comparePass = await bcrypt.compare(password, findUser.password)
-        if (!comparePass) {
-            return {
-                status: 400,
-                message: "Usuario o clave incorrectos"
-            }
-        }
-
-        //comprueba el rol del usuario 
-        if (findUser.rol !== 'admin') {
-            return {
-                status: 400,
-                message: "No tienes privilegios de admin"
-            }
+                message: "No autorizado"
+            };
         }
 
         await model().deleteOne({ nombre })

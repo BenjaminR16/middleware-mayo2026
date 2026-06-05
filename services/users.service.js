@@ -37,22 +37,12 @@ export async function userRegisterService(nombre, password, email, rol) {
 }
 
 export async function userLoginService(password, email) {
-    const findUser = await model().findOne({ email })
-
-    if (!findUser) {
+    const user = await verifyUser(email, password)
+    if (!user) {
         return {
             status: 400,
-            message: "Clave o correo incorrectos"
-        }
-    }
-
-    const hasPass = await bcrypt.compare(password, findUser.password)
-
-    if (!hasPass) {
-        return {
-            status: 400,
-            message: "Clave o correo incorrectos"
-        }
+            message: "No autorizado"
+        };
     }
 
     const token = createToken(findUser.nombre, findUser.email, findUser.rol)
@@ -67,22 +57,12 @@ export async function userProfileService(email) {
 }
 
 export async function userUpdateService(email, password, newPassword) {
-    const findUser = await model().findOne({ email })
-
-    if (!findUser) {
-        return {
-            status: 400, //buscar codigo de usuario no encontrado
-            message: "Usuario no encontrado"
-        }
-    }
-
-    const hasPass = await bcrypt.compare(password, findUser.password)
-
-    if (!hasPass) {
+    const user = await verifyUser(email, password)
+    if (!user) {
         return {
             status: 400,
-            message: "Clave incorrectos"
-        }
+            message: "No autorizado"
+        };
     }
 
     // console.log(password, "nueva: " + newPassword)
@@ -99,20 +79,12 @@ export async function userUpdateService(email, password, newPassword) {
 }
 
 export async function userDeleteService(email, password) {
-    const findUser = await model().findOne({ email })
-    if (!findUser) {
+    const user = await verifyUser(email, password)
+    if (!user) {
         return {
             status: 400,
-            message: "Clave o correo incorrectos"
-        }
-    }
-    const hasPass = await bcrypt.compare(password, findUser.password)
-
-    if (!hasPass) {
-        return {
-            status: 400,
-            message: "Clave o correo incorrectos"
-        }
+            message: "No autorizado"
+        };
     }
     // console.log("Usuario eliminado:", email)
     await model().deleteOne({ email })
@@ -124,3 +96,30 @@ export async function userDeleteService(email, password) {
 
 }
 
+export async function verifyUser(email, password) {
+    const findUser = await model().findOne({ email })
+    //verificar la contrasena tambien no solo el usuario
+    if (!findUser) {
+        return {
+            status: 400,
+            message: "usuario no encontrado"
+        }
+    }
+
+    const comparePass = await bcrypt.compare(password, findUser.password)
+    if (!comparePass) {
+        return {
+            status: 400,
+            message: "Usuario o clave incorrectos"
+        }
+    }
+
+    //comprueba el rol del usuario 
+    if (findUser.rol !== 'admin') {
+        return {
+            status: 400,
+            message: "No tienes privilegios de admin"
+        }
+    }
+
+}
