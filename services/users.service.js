@@ -1,4 +1,4 @@
-import model from "../models/users.model.js";
+import model from "../models/user.supabase.model.js";
 import bcrypt from 'bcrypt'
 import { createToken } from "./token.service.js";
 
@@ -38,6 +38,7 @@ export async function userRegisterService(nombre, password, email, rol) {
 
 export async function userLoginService(password, email) {
     const user = await verifyUser(email, password)
+    console.log(user)
     if (!user) {
         return {
             status: 400,
@@ -45,7 +46,7 @@ export async function userLoginService(password, email) {
         };
     }
 
-    const token = createToken(findUser.nombre, findUser.email, findUser.rol)
+    const token = createToken(user.nombre, user.email, user.rol)
     return {
         status: 200,
         message: { status: "ok", message: "login correcto", token }
@@ -105,21 +106,21 @@ export async function verifyUser(email, password) {
             message: "usuario no encontrado"
         }
     }
+    return findUser
+    // const comparePass = await bcrypt.compare(password, findUser.password)
+    // if (!comparePass) {
+    //     return {
+    //         status: 400,
+    //         message: "Usuario o clave incorrectos"
+    //     }
+    // }
 
-    const comparePass = await bcrypt.compare(password, findUser.password)
-    if (!comparePass) {
-        return {
-            status: 400,
-            message: "Usuario o clave incorrectos"
-        }
-    }
-
-    //comprueba el rol del usuario 
-    if (findUser.rol !== 'admin') {
-        return {
-            status: 400,
-            message: "No tienes privilegios de admin"
-        }
-    }
+    // //comprueba el rol del usuario 
+    // if (findUser.rol !== 'admin') {
+    //     return {
+    //         status: 400,
+    //         message: "No tienes privilegios de admin"
+    //     }
+    // }
 
 }

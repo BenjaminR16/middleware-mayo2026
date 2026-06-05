@@ -15,5 +15,5 @@ export default function model() {
         return mongoose.models[modelName];
     }
 
-    return mongoose.model(modelName, productSchema);
+    return mongoose.model(modelName, productSchema, modelName);
 }

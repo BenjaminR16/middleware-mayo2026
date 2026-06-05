@@ -107,6 +107,6 @@ const userModel = {
     },
 };
 
-export function model() {
+export default function model() {
     return userModel;
 }
