@@ -1,16 +1,16 @@
 import mongoose from '../config/db.config.js';
 
-const modelName = 'crud-products';
+const modelName = 'productos';
 
 const productSchema = new mongoose.Schema({
-    name: String,
-    price: Number,
-    description: String,
+    nombre: String,
+    descripcion: String,
+    precio: Number,
 }, {
     collection: modelName
 });
 
-export function model() {
+export default function model() {
     if (mongoose.models[modelName]) {
         return mongoose.models[modelName];
     }

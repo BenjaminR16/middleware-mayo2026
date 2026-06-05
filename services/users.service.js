@@ -1,4 +1,4 @@
-import { model } from "../models/user.supabase.model.js";
+import model from "../models/users.model.js";
 import bcrypt from 'bcrypt'
 import { createToken } from "./token.service.js";
 
@@ -17,7 +17,6 @@ export async function userRegisterService(nombre, password, email, rol) {
         }
 
         //salt dice las veces que se encripta y hash es donde encriptamos 
-
         const saltRounds = 10
         const salt = bcrypt.genSaltSync(saltRounds)
         const hash = bcrypt.hashSync(password, salt)
@@ -86,7 +85,7 @@ export async function userUpdateService(email, password, newPassword) {
         }
     }
 
-    console.log(password, "nueva: " + newPassword)
+    // console.log(password, "nueva: " + newPassword)
     const saltRounds = 10
     const salt = bcrypt.genSaltSync(saltRounds)
     const newHash = bcrypt.hashSync(newPassword, salt)
@@ -115,7 +114,7 @@ export async function userDeleteService(email, password) {
             message: "Clave o correo incorrectos"
         }
     }
-    console.log("Usuario eliminado:", email)
+    // console.log("Usuario eliminado:", email)
     await model().deleteOne({ email })
 
     return {

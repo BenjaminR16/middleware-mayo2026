@@ -8,12 +8,13 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         unique: true
-    }
+    },
+    rol: String
 }, {
     collection: modelName
 });
 
-export function model() {
+export default function model() {
     if (mongoose.models[modelName]) {
         return mongoose.models[modelName];
     }
